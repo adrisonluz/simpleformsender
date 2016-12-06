@@ -1,0 +1,14 @@
+1.0.1:
+    - 'Initialize plugin.'
+1.0.2:
+    - 'Created table adrisonluz_simpleformsender_labels'
+    - builder_table_create_adrisonluz_simpleformsender_labels.php
+1.0.3:
+    - 'Created table adrisonluz_simpleformsender_forms'
+    - builder_table_create_adrisonluz_simpleformsender_forms.php
+1.0.4:
+    - 'Created table adrisonluz_simpleformsender_forms_register'
+    - builder_table_create_adrisonluz_simpleformsender_forms_register.php
+1.0.5:
+    - 'Created table adrisonluz_simpleformsender_form_contact'
+    - builder_table_create_adrisonluz_simpleformsender_form_contact.php

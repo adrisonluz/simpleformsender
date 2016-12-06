@@ -1,0 +1,10 @@
+name: Forms
+form: $/adrisonluz/simpleformsender/models/form/fields.yaml
+modelClass: AdrisonLuz\SimpleFormSender\Models\Form
+defaultRedirect: adrisonluz/simpleformsender/forms
+create:
+    redirect: 'adrisonluz/simpleformsender/forms/update/:id'
+    redirectClose: adrisonluz/simpleformsender/forms
+update:
+    redirect: adrisonluz/simpleformsender/forms
+    redirectClose: adrisonluz/simpleformsender/forms

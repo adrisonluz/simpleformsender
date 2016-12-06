@@ -1,0 +1,11 @@
+title: Forms
+modelClass: AdrisonLuz\SimpleFormSender\Models\Form
+list: $/adrisonluz/simpleformsender/models/form/columns.yaml
+recordUrl: 'adrisonluz/simpleformsender/forms/update/:id'
+noRecordsMessage: 'backend::lang.list.no_records'
+showSetup: true
+showCheckboxes: true
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'

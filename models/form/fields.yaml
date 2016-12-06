@@ -1,0 +1,27 @@
+fields:
+    label:
+        label: Label
+        span: auto
+        placeholder: 'ex: Contact'
+        required: 1
+        type: text
+        commentAbove: 'Name for form'
+    type:
+        label: Type
+        span: auto
+        placeholder: 'ex: _contact'
+        required: 1
+        type: text
+        commentAbove: 'Type to synchronize with database. The prefix "_" is required.'
+    mailto:
+        label: 'Email to'
+        span: auto
+        placeholder: 'ex: mail@test.com'
+        type: text
+        commentAbove: 'Send form informations to email'
+    obs:
+        label: Description
+        size: tiny
+        span: auto
+        type: textarea
+        commentAbove: 'Describle the form. It''s not required.'

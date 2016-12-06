@@ -1,0 +1,11 @@
+title: 'List Labels'
+modelClass: AdrisonLuz\SimpleFormSender\Models\Label
+list: $/adrisonluz/simpleformsender/models/label/columns.yaml
+recordUrl: 'adrisonluz/simpleformsender/labels/update/:id'
+noRecordsMessage: 'backend::lang.list.no_records'
+showSetup: true
+showCheckboxes: true
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'

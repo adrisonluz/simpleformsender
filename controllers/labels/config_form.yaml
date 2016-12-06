@@ -1,0 +1,10 @@
+name: 'Form Labels'
+modelClass: AdrisonLuz\SimpleFormSender\Models\Label
+form: $/adrisonluz/simpleformsender/models/label/fields.yaml
+defaultRedirect: adrisonluz/simpleformsender/labels
+create:
+    redirect: 'adrisonluz/simpleformsender/labels/update/:id'
+    redirectClose: adrisonluz/simpleformsender/labels
+update:
+    redirect: adrisonluz/simpleformsender/labels
+    redirectClose: adrisonluz/simpleformsender/labels

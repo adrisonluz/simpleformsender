@@ -1,0 +1,15 @@
+fields:
+    label:
+        label: Label
+        span: auto
+        placeholder: 'ex: Nome, E-mail, Telefone'
+        required: 1
+        type: text
+        commentAbove: 'The label for input'
+    name:
+        label: Name
+        span: auto
+        placeholder: 'ex: name, email, phone'
+        required: 1
+        type: text
+        commentAbove: 'The field "name" for input'

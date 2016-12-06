@@ -1,0 +1,11 @@
+title: Home
+modelClass: AdrisonLuz\SimpleFormSender\Models\FormsRegister
+list: $/adrisonluz/simpleformsender/models/index/columns.yaml
+recordUrl: adrisonluz/simpleformsender/index
+noRecordsMessage: No registers found
+showSetup: true
+showCheckboxes: true
+toolbar:
+     buttons: list_toolbar
+     search:
+             prompt: 'backend::lang.list.search_prompt'

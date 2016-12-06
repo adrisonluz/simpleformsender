@@ -1,0 +1,37 @@
+plugin:
+    name: 'adrisonluz.simpleformsender::lang.plugin.name'
+    description: 'adrisonluz.simpleformsender::lang.plugin.description'
+    author: 'Adrison Luz'
+    icon: oc-icon-list-alt
+    homepage: ''
+permissions:
+    simpleformsender_manager:
+        tab: 'adrisonluz.simpleformsender::lang.plugin.name'
+        label: 'adrisonluz.simpleformsender::lang.plugin.name'
+navigation:
+    simple-form-sender:
+        label: 'adrisonluz.simpleformsender::lang.plugin.name'
+        url: adrisonluz/simpleformsender/index
+        icon: icon-list-alt
+        permissions:
+            - simpleformsender_manager
+        order: '30'
+        sideMenu:
+            index:
+                label: Home
+                url: adrisonluz/simpleformsender/index
+                icon: icon-home
+                permissions:
+                    - simpleformsender_manager
+            labels:
+                label: Labels
+                url: adrisonluz/simpleformsender/labels
+                icon: icon-font
+                permissions:
+                    - simpleformsender_manager_admin
+            forms:
+                label: Forms
+                url: adrisonluz/simpleformsender/forms
+                icon: icon-th-list
+                permissions:
+                    - simpleformsender_manager_admin
