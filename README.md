@@ -10,6 +10,7 @@ php artisan plugin:refresh SeuNome.SimpleFormSender
 ```
 
 Pronto! Você já pode utilizar o plugin.
+Caso você receba uma mensagem de erro de permissões, basta dar permissão total (777) na pasta "simpleformsender" e em seus subdiretórios (-R).
 
 ## Como utilizar o plugin
 Existem alguns detalhes que precisam de uma atenção especial. Veja:

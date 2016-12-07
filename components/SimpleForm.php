@@ -151,21 +151,14 @@ class SimpleForm extends ComponentBase
         $vars = array();
 
         foreach (post() as $key => $value) {
-            switch($key){
-                case != 'type':
-                    $labelMail = Label::where('name','=',$key)->get();
-                    if(count($labelMail) > 0)
-                        $key = $labelMail->first()->label;
+            if($key !== 'type'){
+                $labelMail = Label::where('name','=',$key)->get();
+                if(count($labelMail) > 0)
+                    $key = $labelMail->first()->label;
 
-                case is_array($value):
-                        $val = implode(',', $value);
-                        $send->$key = $val;
-                        $vars[] = ['key' => $key, 'val' => $val];
-                    break;
-                case is_string($value):
-                    $send->$key = $value;
-                    $vars[] = ['key' => $key, 'val' => $value];
-                    break;
+                $val = (is_array($value) ? implode(', ',$value) : $value);
+                $send->$key = $val;
+                $vars[] = ['key' => $key, 'val' => $val];
             }
         }
         $send->save();
