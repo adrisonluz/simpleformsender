@@ -24,7 +24,7 @@ class FormsRegister extends Model
     /**
      * @var string The database table used by the model.
      */
-    public $table = 'adrisonluz_simpleformsender_forms_register';
+    public $table = 'adrisonluz_simpleformsender_register_forms';
 
     public $belongsTo = [
         'form' => ['AdrisonLuz\SimpleFormSender\Models\Form', 'key' => 'type', 'otherKey' => 'type']

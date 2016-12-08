@@ -7,7 +7,7 @@ class BuilderTableCreateAdrisonluzSimpleformsenderFormsRegister extends Migratio
 {
     public function up()
     {
-        Schema::create('adrisonluz_simpleformsender_forms_register', function($table)
+        Schema::create('adrisonluz_simpleformsender_register_forms', function($table)
         {
             $table->engine = 'InnoDB';
             $table->increments('id');
@@ -20,6 +20,6 @@ class BuilderTableCreateAdrisonluzSimpleformsenderFormsRegister extends Migratio
 
     public function down()
     {
-        Schema::dropIfExists('adrisonluz_simpleformsender_forms_register');
+        Schema::dropIfExists('adrisonluz_simpleformsender_register_forms');
     }
 }

@@ -1,7 +1,7 @@
 <?php namespace AdrisonLuz\SimpleFormSender\Components;
 
 use Cms\Classes\ComponentBase;
-use AdrisonLuz\SimpleFormSender\Models\FormsRegister;
+use AdrisonLuz\SimpleFormSender\Models\RegisterForms;
 use File;
 use Schema;
 use Mail;
@@ -88,13 +88,13 @@ class SimpleForm extends ComponentBase
     public function onSendForm(){
         $this->type =post('type');
         $this->nameForm = str_replace('_', '', $this->type);
-        $checkForm = FormsRegister::with('form')->where('type','=',$this->type)->get();
+        $checkForm = RegisterForms::with('form')->where('type','=',$this->type)->get();
 
         $checkLabel = Label::where('name','=',$this->nameForm)->get();
         $this->labelForm = (count($checkLabel) > 0 ? $checkLabel->first()->label : $this->nameForm);
 
         if(count($checkForm) == 0 ){
-            $formRegister = new FormsRegister();
+            $formRegister = new RegisterForms();
             $formRegister->type = $this->type;
             $formRegister->label = $this->labelForm;
             $formRegister->table_form = 'adrisonluz_simpleformsender_form' . $this->type . 's';
@@ -139,7 +139,7 @@ class SimpleForm extends ComponentBase
                 $this->setModel($varsModel);
 
                 shell_exec('composer dump-autoload');
-                $checkForm = FormsRegister::with('form')->where('type','=',$this->type)->get();
+                $checkForm = RegisterForms::with('form')->where('type','=',$this->type)->get();
             }else{
                 echo 'Error to register the new form.';
                 die();
@@ -152,12 +152,13 @@ class SimpleForm extends ComponentBase
 
         foreach (post() as $key => $value) {
             if($key !== 'type'){
+                $val = (is_array($value) ? implode(', ',$value) : $value);
+                $send->$key = $val;
+
                 $labelMail = Label::where('name','=',$key)->get();
                 if(count($labelMail) > 0)
                     $key = $labelMail->first()->label;
 
-                $val = (is_array($value) ? implode(', ',$value) : $value);
-                $send->$key = $val;
                 $vars[] = ['key' => $key, 'val' => $val];
             }
         }
