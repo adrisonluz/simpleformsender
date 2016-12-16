@@ -1,5 +1,5 @@
 title: Home
-modelClass: AdrisonLuz\SimpleFormSender\Models\FormsRegister
+modelClass: AdrisonLuz\SimpleFormSender\Models\RegisterForms
 list: $/adrisonluz/simpleformsender/models/index/columns.yaml
 recordUrl: adrisonluz/simpleformsender/index
 noRecordsMessage: No registers found

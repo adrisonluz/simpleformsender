@@ -1,17 +1,20 @@
-<?php namespace AdrisonLuz\SimpleFormSender\Models;
+<?php
+
+namespace AdrisonLuz\SimpleFormSender\Models;
 
 use Model;
 
 /**
  * Model
  */
-class FormsRegister extends Model
-{
+class RegisterForms extends Model {
+
     use \October\Rain\Database\Traits\Validation;
 
     /*
      * Validation
      */
+
     public $rules = [
     ];
 
@@ -25,8 +28,8 @@ class FormsRegister extends Model
      * @var string The database table used by the model.
      */
     public $table = 'adrisonluz_simpleformsender_register_forms';
-
     public $belongsTo = [
         'form' => ['AdrisonLuz\SimpleFormSender\Models\Form', 'key' => 'type', 'otherKey' => 'type']
     ];
+
 }
