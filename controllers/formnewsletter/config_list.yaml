@@ -1,0 +1,11 @@
+title: Newsletter
+modelClass: AdrisonLuz\SimpleFormSender\Models\FormNewsletter
+list: $/adrisonluz/simpleformsender/models/formnewsletter/columns.yaml
+recordUrl: adrisonluz/simpleformsender/formnewsletter
+noRecordsMessage: No registers found
+showSetup: true
+showCheckboxes: true
+toolbar:
+     buttons: list_toolbar
+     search:
+             prompt: 'backend::lang.list.search_prompt'

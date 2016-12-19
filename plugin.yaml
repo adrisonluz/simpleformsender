@@ -35,3 +35,9 @@ navigation:
                 icon: icon-th-list
                 permissions:
                     - simpleformsender_manager_admin
+            form-newsletter:
+             label: Newsletter
+             url: adrisonluz/simpleformsender/formnewsletter
+             icon: icon-send-o
+             permissions:
+                 - simpleformsender_manager

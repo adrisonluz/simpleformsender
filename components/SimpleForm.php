@@ -1,4 +1,6 @@
-<?php namespace AdrisonLuz\SimpleFormSender\Components;
+<?php
+
+namespace AdrisonLuz\SimpleFormSender\Components;
 
 use Cms\Classes\ComponentBase;
 use AdrisonLuz\SimpleFormSender\Models\RegisterForms;
@@ -9,8 +11,7 @@ use AdrisonLuz\SimpleFormSender\Models\Label;
 use AdrisonLuz\SimpleFormSender\Models\Form;
 use System\Models\MailTemplate;
 
-class SimpleForm extends ComponentBase
-{
+class SimpleForm extends ComponentBase {
 
     /**
      * The type of form
@@ -42,58 +43,56 @@ class SimpleForm extends ComponentBase
      */
     public $successFunction;
 
-    public function componentDetails()
-    {
+    public function componentDetails() {
         return [
-            'name'        => 'SimpleForm',
+            'name' => 'SimpleForm',
             'description' => 'A simple form to manager in Simple Form Sender plugin.'
         ];
     }
 
-    public function defineProperties()
-    {
+    public function defineProperties() {
         return [
             'type' => [
-                'title'       => 'Type',
+                'title' => 'Type',
                 'description' => 'Type for form.',
-                'type'        => 'string',
-                'default'     => '',
-                'validation'  => [
+                'type' => 'string',
+                'default' => '',
+                'validation' => [
                     'required' => [
                         'message' => 'The type field is required.'
                     ]
                 ]
             ],
             'successFunction' => [
-                'title'       => 'Succes Function',
+                'title' => 'Succes Function',
                 'description' => 'The return function for submit form.',
-                'type'        => 'string',
-                'default'     => ''
+                'type' => 'string',
+                'default' => ''
             ],
-           'class' => [
-                'title'       => 'Class',
+            'class' => [
+                'title' => 'Class',
                 'description' => 'The CSS class.',
-                'type'        => 'string',
-                'default'     => ''
+                'type' => 'string',
+                'default' => ''
             ]
         ];
     }
 
-    public function onRun(){
+    public function onRun() {
         $this->type = $this->property('type');
         $this->class = $this->property('class');
         $this->successFunction = $this->page['successFunction'] = $this->property('successFunction');
     }
 
-    public function onSendForm(){
-        $this->type =post('type');
+    public function onSendForm() {
+        $this->type = post('type');
         $this->nameForm = str_replace('_', '', $this->type);
-        $checkForm = RegisterForms::with('form')->where('type','=',$this->type)->get();
+        $checkForm = RegisterForms::with('form')->where('type', '=', $this->type)->get();
 
-        $checkLabel = Label::where('name','=',$this->nameForm)->get();
+        $checkLabel = Label::where('name', '=', $this->nameForm)->get();
         $this->labelForm = (count($checkLabel) > 0 ? $checkLabel->first()->label : $this->nameForm);
 
-        if(count($checkForm) == 0 ){
+        if (count($checkForm) == 0) {
             $formRegister = new RegisterForms();
             $formRegister->type = $this->type;
             $formRegister->label = $this->labelForm;
@@ -101,13 +100,12 @@ class SimpleForm extends ComponentBase
             $formRegister->model = 'Form' . ucfirst($this->nameForm);
             $formSave = $formRegister->save();
 
-            if($formSave){
-                Schema::create('adrisonluz_simpleformsender_form' . $this->type . 's', function($table)
-                {
+            if ($formSave) {
+                Schema::create('adrisonluz_simpleformsender_form' . $this->type . 's', function($table) {
                     $table->increments('id');
                     foreach (post() as $key => $value) {
-                        if($key !== 'type' ){
-                            switch($key){
+                        if ($key !== 'type') {
+                            switch ($key) {
                                 case $key == 'msg':
                                 case $key == 'texto':
                                 case $key == 'feedback':
@@ -130,7 +128,7 @@ class SimpleForm extends ComponentBase
 
                 $varsModel = array();
                 foreach (post() as $key => $value) {
-                    if($key !== 'type'){
+                    if ($key !== 'type') {
                         $varsModel[] = $key;
                     }
                 }
@@ -139,8 +137,8 @@ class SimpleForm extends ComponentBase
                 $this->setModel($varsModel);
 
                 shell_exec('composer dump-autoload');
-                $checkForm = RegisterForms::with('form')->where('type','=',$this->type)->get();
-            }else{
+                $checkForm = RegisterForms::with('form')->where('type', '=', $this->type)->get();
+            } else {
                 echo 'Error to register the new form.';
                 die();
             }
@@ -151,12 +149,12 @@ class SimpleForm extends ComponentBase
         $vars = array();
 
         foreach (post() as $key => $value) {
-            if($key !== 'type'){
-                $val = (is_array($value) ? implode(', ',$value) : $value);
+            if ($key !== 'type') {
+                $val = (is_array($value) ? implode(', ', $value) : $value);
                 $send->$key = $val;
 
-                $labelMail = Label::where('name','=',$key)->get();
-                if(count($labelMail) > 0)
+                $labelMail = Label::where('name', '=', $key)->get();
+                if (count($labelMail) > 0)
                     $key = $labelMail->first()->label;
 
                 $vars[] = ['key' => $key, 'val' => $val];
@@ -164,15 +162,15 @@ class SimpleForm extends ComponentBase
         }
         $send->save();
 
-        if(isset($checkForm->first()->form->mailto)){
+        if (isset($checkForm->first()->form->mailto)) {
             $form = $checkForm->first()->form;
             $file = (isset($_FILES['arquivo']) ? $_FILES['arquivo'] : '');
 
-            $checkTemplate = MailTemplate::where('code','=',$form->type)->get();
-            if(count($checkTemplate) > 0){
+            $checkTemplate = MailTemplate::where('code', '=', $form->type)->get();
+            if (count($checkTemplate) > 0) {
                 $templete = $checkTemplate->first()->code;
                 $subject = $checkTemplate->first()->subject;
-            }else{
+            } else {
                 $templete = 'default';
                 $subject = 'Site | ' . $form->label;
             }
@@ -180,146 +178,158 @@ class SimpleForm extends ComponentBase
             Mail::send($templete, ['vars' => $vars], function ($m) use ($vars, $form, $file, $subject) {
                 $m->to($form->mailto)->subject($subject);
 
-                if($file !== '')
+                if ($file !== '')
                     $m->attach($file);
             });
         }
     }
 
-    public function setComponent(){
-            $appYaml = '            form-' . $this->nameForm . ':' . "\n"
+    public function setComponent() {
+        $appYaml = '            form-' . $this->nameForm . ':' . "\n"
                 . '             label: ' . ucfirst($this->labelForm) . "\n"
                 . '             url: adrisonluz/simpleformsender/form' . $this->nameForm . "\n"
                 . '             icon: icon-send-o' . "\n"
                 . '             permissions:' . "\n"
-                    . '                 - simpleformsender_manager' . "\n";
+                . '                 - simpleformsender_manager' . "\n";
 
-            $yaml = fopen("plugins/adrisonluz/simpleformsender/plugin.yaml","a");
-            $yamlWrite = fwrite($yaml, $appYaml);
-            fclose($yaml);
+        $yaml = fopen("plugins/adrisonluz/simpleformsender/plugin.yaml", "a");
+        $yamlWrite = fwrite($yaml, $appYaml);
+        fclose($yaml);
     }
 
-    public function createController(){
+    public function createController() {
         $controllerPHP = '<?php namespace AdrisonLuz\SimpleFormSender\Controllers;' . "\n"
-            . ' ' . "\n"
-        . 'use Backend\Classes\Controller;' . "\n"
-        . 'use BackendMenu;' . "\n"
-            . ' ' . "\n"
-        . 'class Form' . ucfirst($this->nameForm) . ' extends Controller' . "\n"
-        . '{' . "\n"
-            . 'public $implement = [\'Backend\Behaviors\ListController\'];' . "\n"
-            . ' ' . "\n"
-            . 'public $listConfig = \'config_list.yaml\';' . "\n"
-            . ' ' . "\n"
-            . 'public $requiredPermissions = [' . "\n"
+                . ' ' . "\n"
+                . 'use Backend\Classes\Controller;' . "\n"
+                . 'use BackendMenu;' . "\n"
+                . ' ' . "\n"
+                . 'class Form' . ucfirst($this->nameForm) . ' extends Controller' . "\n"
+                . '{' . "\n"
+                . 'public $implement = [\'Backend\Behaviors\ListController\'];' . "\n"
+                . ' ' . "\n"
+                . 'public $listConfig = \'config_list.yaml\';' . "\n"
+                . ' ' . "\n"
+                . 'public $requiredPermissions = [' . "\n"
                 . '\'simpleformsender_manager\'' . "\n"
-            . '];' . "\n"
-            . ' ' . "\n"
-            . 'public function __construct()' . "\n"
-            . '{' . "\n"
+                . '];' . "\n"
+                . ' ' . "\n"
+                . 'public function __construct()' . "\n"
+                . '{' . "\n"
                 . 'parent::__construct();' . "\n"
                 . 'BackendMenu::setContext(\'AdrisonLuz.SimpleFormSender\', \'simple-form-sender\', \'form-' . $this->nameForm . '\');' . "\n"
-            . '}' . "\n"
-        . '}' . "\n";
+                . '}' . "\n"
+                . '}' . "\n";
 
-        $controller = fopen("plugins/adrisonluz/simpleformsender/controllers/Form" . ucfirst($this->nameForm) . '.php',"a");
+        $controller = fopen("plugins/adrisonluz/simpleformsender/controllers/Form" . ucfirst($this->nameForm) . '.php', "a");
         $controllerWrite = fwrite($controller, $controllerPHP);
         fclose($controller);
     }
 
-    public function setControllerComponent(){
-            $controllerConfig =  'title: ' . ucfirst($this->labelForm) . "\n"
-                    . 'modelClass: AdrisonLuz\SimpleFormSender\Models\Form' . ucfirst($this->nameForm) . "\n"
-                    . 'list: $/adrisonluz/simpleformsender/models/form' . $this->nameForm .  '/columns.yaml' . "\n"
-                    . 'recordUrl: adrisonluz/simpleformsender/form' . $this->nameForm . "\n"
-                    . 'noRecordsMessage: No registers found' . "\n"
-                    . 'showSetup: true' . "\n"
-                    . 'showCheckboxes: true' . "\n"
-                    . 'toolbar:' . "\n"
-                    . '     buttons: list_toolbar' . "\n"
-                    . '     search:' . "\n"
-                    . '             prompt: \'backend::lang.list.search_prompt\'' . "\n";
+    public function setControllerComponent() {
+        $controllerConfig = 'title: ' . ucfirst($this->labelForm) . "\n"
+                . 'modelClass: AdrisonLuz\SimpleFormSender\Models\Form' . ucfirst($this->nameForm) . "\n"
+                . 'list: $/adrisonluz/simpleformsender/models/form' . $this->nameForm . '/columns.yaml' . "\n"
+                . 'recordUrl: adrisonluz/simpleformsender/form' . $this->nameForm . "\n"
+                . 'noRecordsMessage: No registers found' . "\n"
+                . 'showSetup: true' . "\n"
+                . 'showCheckboxes: true' . "\n"
+                . 'toolbar:' . "\n"
+                . '     buttons: list_toolbar' . "\n"
+                . '     search:' . "\n"
+                . '             prompt: \'backend::lang.list.search_prompt\'' . "\n"
+                . 'filter: config_filter.yaml' . "\n";
 
-            $config = fopen("plugins/adrisonluz/simpleformsender/controllers/form" . $this->nameForm .  "/config_list.yaml","a");
-            $configWrite = fwrite($config, $controllerConfig);
-            fclose($config);
+        $config = fopen("plugins/adrisonluz/simpleformsender/controllers/form" . $this->nameForm . "/config_list.yaml", "a");
+        $configWrite = fwrite($config, $controllerConfig);
+        fclose($config);
 
-            $list_toolbar =  '<div data-control="toolbar">' . "\n"
-                                            . '<button' . "\n"
-                                            . 'class="btn btn-default oc-icon-trash-o"' . "\n"
-                                            . 'disabled="disabled"' . "\n"
-                                            . 'onclick="$(this).data(\'request-data\', {' . "\n"
-                                                . 'checked: $(\'.control-list\').listWidget(\'getChecked\')' . "\n"
-                                            . '})"' . "\n"
-                                            . 'data-request="onDelete"' . "\n"
-                                            . 'data-request-confirm="<?= e(trans(\'backend::lang.list.delete_selected_confirm\')) ?>"' . "\n"
-                                            . 'data-trigger-action="enable"' . "\n"
-                                            . 'data-trigger=".control-list input[type=checkbox]"' . "\n"
-                                            . 'data-trigger-condition="checked"' . "\n"
-                                            . 'data-request-success="$(this).prop(\'disabled\', true)"' . "\n"
-                                            . 'data-stripe-load-indicator>' . "\n"
-                                            . '<?= e(trans(\'backend::lang.list.delete_selected\')) ?>' . "\n"
-                                        . '</button>' . "\n"
-                                    . '</div>' . "\n";
+        $list_toolbar = '<div data-control="toolbar">' . "\n"
+                . '<button' . "\n"
+                . 'class="btn btn-default oc-icon-trash-o"' . "\n"
+                . 'disabled="disabled"' . "\n"
+                . 'onclick="$(this).data(\'request-data\', {' . "\n"
+                . 'checked: $(\'.control-list\').listWidget(\'getChecked\')' . "\n"
+                . '})"' . "\n"
+                . 'data-request="onDelete"' . "\n"
+                . 'data-request-confirm="<?= e(trans(\'backend::lang.list.delete_selected_confirm\')) ?>"' . "\n"
+                . 'data-trigger-action="enable"' . "\n"
+                . 'data-trigger=".control-list input[type=checkbox]"' . "\n"
+                . 'data-trigger-condition="checked"' . "\n"
+                . 'data-request-success="$(this).prop(\'disabled\', true)"' . "\n"
+                . 'data-stripe-load-indicator>' . "\n"
+                . '<?= e(trans(\'backend::lang.list.delete_selected\')) ?>' . "\n"
+                . '</button>' . "\n"
+                . '</div>' . "\n";
 
-            $toolbar = fopen("plugins/adrisonluz/simpleformsender/controllers/form" . $this->nameForm .  "/_list_toolbar.htm","a");
-            $toolbarWrite = fwrite($toolbar, $list_toolbar);
-            fclose($toolbar);
+        $toolbar = fopen("plugins/adrisonluz/simpleformsender/controllers/form" . $this->nameForm . "/_list_toolbar.htm", "a");
+        $toolbarWrite = fwrite($toolbar, $list_toolbar);
+        fclose($toolbar);
 
-            $index = fopen("plugins/adrisonluz/simpleformsender/controllers/form" . $this->nameForm .  "/index.htm","a");
-            $indexWrite = fwrite($index, '<?= $this->listRender() ?>');
-            fclose($index);
+        $controllerFilter = 'scopes:' . "\n"
+                . '    created_at:' . "\n"
+                . '        label: Date' . "\n"
+                . '        type: daterange' . "\n"
+                . '        conditions: created_at >= \':after\' AND created_at <= \':before\'' . "\n";
+
+        $filter = fopen("plugins/adrisonluz/simpleformsender/controllers/form" . $this->nameForm . "/config_filter.yaml", "a");
+        $filterWrite = fwrite($filter, $controllerFilter);
+        fclose($filter);
+
+        $index = fopen("plugins/adrisonluz/simpleformsender/controllers/form" . $this->nameForm . "/index.htm", "a");
+        $indexWrite = fwrite($index, '<?= $this->listRender() ?>');
+        fclose($index);
     }
 
-    public function createModel(){
-        $modelPHP =  '<?php namespace AdrisonLuz\SimpleFormSender\Models;' . "\n"
-        . ' ' . "\n"
-        . 'use Model;' . "\n"
-        . ' ' . "\n"
-        . '/**' . "\n"
-         . '* Form' . ucfirst($this->nameForm) . ' Model' . "\n"
-         . '*/' . "\n"
-        . 'class Form' . ucfirst($this->nameForm) . ' extends Model' . "\n"
-        . '{' . "\n"
-        . ' ' . "\n"
-            . '/**' . "\n"
-             . '* @var string The database table used by the model.' . "\n"
-             . '*/' . "\n"
-            . 'public $table = \'adrisonluz_simpleformsender_form' . $this->type . 's\';' . "\n"
-        . ' ' . "\n"
-            . '/**' . "\n"
-             . '* @var array Guarded fields' . "\n"
-             . '*/' . "\n"
-            . 'protected $guarded = [\'*\'];' . "\n"
-        . ' ' . "\n"
-            . '/**' . "\n"
-             . '* @var array Fillable fields' . "\n"
-             . '*/' . "\n"
-            . 'protected $fillable = [];' . "\n"
-        . ' ' . "\n"
-        . '}' . "\n";
+    public function createModel() {
+        $modelPHP = '<?php namespace AdrisonLuz\SimpleFormSender\Models;' . "\n"
+                . ' ' . "\n"
+                . 'use Model;' . "\n"
+                . ' ' . "\n"
+                . '/**' . "\n"
+                . '* Form' . ucfirst($this->nameForm) . ' Model' . "\n"
+                . '*/' . "\n"
+                . 'class Form' . ucfirst($this->nameForm) . ' extends Model' . "\n"
+                . '{' . "\n"
+                . ' ' . "\n"
+                . '/**' . "\n"
+                . '* @var string The database table used by the model.' . "\n"
+                . '*/' . "\n"
+                . 'public $table = \'adrisonluz_simpleformsender_form' . $this->type . 's\';' . "\n"
+                . ' ' . "\n"
+                . '/**' . "\n"
+                . '* @var array Guarded fields' . "\n"
+                . '*/' . "\n"
+                . 'protected $guarded = [\'*\'];' . "\n"
+                . ' ' . "\n"
+                . '/**' . "\n"
+                . '* @var array Fillable fields' . "\n"
+                . '*/' . "\n"
+                . 'protected $fillable = [];' . "\n"
+                . ' ' . "\n"
+                . '}' . "\n";
 
-        $model = fopen("plugins/adrisonluz/simpleformsender/models/Form" . ucfirst($this->nameForm) . '.php',"a");
+        $model = fopen("plugins/adrisonluz/simpleformsender/models/Form" . ucfirst($this->nameForm) . '.php', "a");
         $modelWrite = fwrite($model, $modelPHP);
         fclose($model);
     }
 
-    public function setModel($varsModel){
-            $modelStructure = 'columns:' . "\n";
+    public function setModel($varsModel) {
+        $modelStructure = 'columns:' . "\n";
 
-            foreach ($varsModel as $column) {
-                $checkColumn = Label::where('name','=',$column)->get();
-               $labelColumn = (count($checkColumn) > 0 ? $checkColumn->first()->label : $column);
+        foreach ($varsModel as $column) {
+            $checkColumn = Label::where('name', '=', $column)->get();
+            $labelColumn = (count($checkColumn) > 0 ? $checkColumn->first()->label : $column);
 
-                $modelStructure .= ' ' . $column . ':' . "\n"
-                                            . '     label: ' . $labelColumn .  "\n"
-                                            . '     type: text' . "\n"
-                                            . '     searchable: true' . "\n"
-                                            . '     sortable: true' . "\n";
-            }
+            $modelStructure .= ' ' . $column . ':' . "\n"
+                    . '     label: ' . $labelColumn . "\n"
+                    . '     type: text' . "\n"
+                    . '     searchable: true' . "\n"
+                    . '     sortable: true' . "\n";
+        }
 
-            $model = fopen("plugins/adrisonluz/simpleformsender/models/form" . $this->nameForm .  "/columns.yaml","a");
-            $modelWrite = fwrite($model, $modelStructure);
-            fclose($model);
+        $model = fopen("plugins/adrisonluz/simpleformsender/models/form" . $this->nameForm . "/columns.yaml", "a");
+        $modelWrite = fwrite($model, $modelStructure);
+        fclose($model);
     }
+
 }
